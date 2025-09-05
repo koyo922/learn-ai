@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人卡片生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: #1a1a1a;
+                color: #e0e0e0;
+            }
+            
+            .input-panel, .preview-panel {
+                background: #2d2d2d !important;
+                color: #e0e0e0 !important;
+            }
+            
+            input, textarea, select {
+                background: #3d3d3d !important;
+                border-color: #555 !important;
+                color: #e0e0e0 !important;
+            }
+            
+            input:focus, textarea:focus, select:focus {
+                border-color: #007bff !important;
+                box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                height: auto;
+                min-height: 100vh;
+            }
+            
+            .preview-panel {
+                order: -1;
+                min-height: 300px;
+            }
+            
+            #cardCanvas {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: 100vh;
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        .input-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-y: auto;
+        }
+        
+        .preview-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        textarea {
+            height: 80px;
+            resize: vertical;
+        }
+        
+        #cardCanvas {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="input-panel">
+            <h2>个人信息</h2>
+            <div class="form-group">
+                <label>姓名</label>
+                <input type="text" id="name" placeholder="输入您的姓名" value="张三">
+            </div>
+            <div class="form-group">
+                <label>职位</label>
+                <input type="text" id="title" placeholder="输入您的职位" value="前端开发工程师">
+            </div>
+            <div class="form-group">
+                <label>公司</label>
+                <input type="text" id="company" placeholder="输入您的公司" value="某科技公司">
+            </div>
+            <div class="form-group">
+                <label>个人简介</label>
+                <textarea id="bio" placeholder="简单介绍一下自己">专注于前端开发，熟悉React、Vue等框架，热爱新技术。</textarea>
+            </div>
+            <div class="form-group">
+                <label>邮箱</label>
+                <input type="email" id="email" placeholder="输入您的邮箱" value="zhangsan@example.com">
+            </div>
+            <div class="form-group">
+                <label>电话</label>
+                <input type="tel" id="phone" placeholder="输入您的电话" value="138-0000-0000">
+            </div>
+            <div class="form-group">
+                <label>网站</label>
+                <input type="url" id="website" placeholder="输入您的个人网站" value="https://github.com/zhangsan">
+            </div>
+            <div class="form-group">
+                <label>卡片模板</label>
+                <select id="template">
+                    <option value="business">商务风格</option>
+                    <option value="creative">创意设计</option>
+                    <option value="tech">技术极客</option>
+                    <option value="academic">学术研究</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <button onclick="downloadCard()" style="background: #007bff; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; width: 100%; font-size: 16px; margin-bottom: 10px;">下载PNG图片</button>
+                <button onclick="saveData()" style="background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; width: 48%; font-size: 14px; margin-right: 4%;">保存数据</button>
+                <button onclick="loadData()" style="background: #6c757d; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; width: 48%; font-size: 14px;">恢复数据</button>
+            </div>
+        </div>
+        
+        <div class="preview-panel">
+            <canvas id="cardCanvas" width="400" height="250"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('cardCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        function drawCard() {
+            // 清空画布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 获取输入值
+            const name = document.getElementById('name').value || '姓名';
+            const title = document.getElementById('title').value || '职位';
+            const company = document.getElementById('company').value || '公司';
+            const bio = document.getElementById('bio').value || '个人简介';
+            const email = document.getElementById('email').value || '';
+            const phone = document.getElementById('phone').value || '';
+            const website = document.getElementById('website').value || '';
+            const template = document.getElementById('template').value;
+            
+            // 根据模板绘制
+            switch(template) {
+                case 'business':
+                    drawBusinessTemplate(name, title, company, bio, email, phone, website);
+                    break;
+                case 'creative':
+                    drawCreativeTemplate(name, title, company, bio, email, phone, website);
+                    break;
+                case 'tech':
+                    drawTechTemplate(name, title, company, bio, email, phone, website);
+                    break;
+                case 'academic':
+                    drawAcademicTemplate(name, title, company, bio, email, phone, website);
+                    break;
+                default:
+                    drawBusinessTemplate(name, title, company, bio, email, phone, website);
+            }
+        }
+        
+        function drawBusinessTemplate(name, title, company, bio, email, phone, website) {
+            // 商务风格：简洁、专业
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#2c3e50';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(0, 0, canvas.width, canvas.height);
+            
+            // 姓名
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = 'bold 28px Arial';
+            ctx.fillText(name, 30, 50);
+            
+            // 职位和公司
+            ctx.fillStyle = '#34495e';
+            ctx.font = '16px Arial';
+            ctx.fillText(`${title} @ ${company}`, 30, 80);
+            
+            // 联系方式
+            ctx.fillStyle = '#7f8c8d';
+            ctx.font = '12px Arial';
+            let yPos = 110;
+            if (email) { ctx.fillText(`📧 ${email}`, 30, yPos); yPos += 20; }
+            if (phone) { ctx.fillText(`📱 ${phone}`, 30, yPos); yPos += 20; }
+            if (website) { ctx.fillText(`🌐 ${website}`, 30, yPos); yPos += 20; }
+            
+            // 简介
+            if (bio) {
+                ctx.fillStyle = '#555';
+                ctx.font = '12px Arial';
+                const bioLines = wrapText(ctx, bio, 340);
+                bioLines.forEach((line, index) => {
+                    ctx.fillText(line, 30, yPos + 10 + index * 16);
+                });
+            }
+        }
+        
+        function drawCreativeTemplate(name, title, company, bio, email, phone, website) {
+            // 创意设计风格：渐变背景、现代字体
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(1, '#764ba2');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 白色圆角矩形背景
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+            ctx.beginPath();
+            ctx.roundRect(20, 20, canvas.width - 40, canvas.height - 40, 15);
+            ctx.fill();
+            
+            // 姓名
+            ctx.fillStyle = '#4a5568';
+            ctx.font = 'bold 26px Arial';
+            ctx.fillText(name, 40, 70);
+            
+            // 职位
+            ctx.fillStyle = '#667eea';
+            ctx.font = 'bold 16px Arial';
+            ctx.fillText(title, 40, 95);
+            
+            // 公司
+            ctx.fillStyle = '#718096';
+            ctx.font = '14px Arial';
+            ctx.fillText(company, 40, 115);
+            
+            // 联系方式和简介
+            drawContactInfo(email, phone, website, bio, 40, 140);
+        }
+        
+        function drawTechTemplate(name, title, company, bio, email, phone, website) {
+            // 技术极客风格：深色背景、绿色主题
+            ctx.fillStyle = '#0d1117';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 绿色边框
+            ctx.strokeStyle = '#00d4aa';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
+            
+            // 姓名
+            ctx.fillStyle = '#00d4aa';
+            ctx.font = 'bold 24px monospace';
+            ctx.fillText(`> ${name}`, 20, 50);
+            
+            // 职位
+            ctx.fillStyle = '#58a6ff';
+            ctx.font = '16px monospace';
+            ctx.fillText(`$ role: ${title}`, 20, 75);
+            
+            // 公司
+            ctx.fillStyle = '#79c0ff';
+            ctx.font = '14px monospace';
+            ctx.fillText(`# company: ${company}`, 20, 100);
+            
+            // 联系方式
+            ctx.fillStyle = '#ffa657';
+            ctx.font = '12px monospace';
+            let yPos = 125;
+            if (email) { ctx.fillText(`// email: ${email}`, 20, yPos); yPos += 18; }
+            if (phone) { ctx.fillText(`// phone: ${phone}`, 20, yPos); yPos += 18; }
+            if (website) { ctx.fillText(`// web: ${website}`, 20, yPos); yPos += 18; }
+        }
+        
+        function drawAcademicTemplate(name, title, company, bio, email, phone, website) {
+            // 学术研究风格：传统、正式
+            ctx.fillStyle = '#f8f9fa';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 深蓝色顶部条带
+            ctx.fillStyle = '#1e3a8a';
+            ctx.fillRect(0, 0, canvas.width, 60);
+            
+            // 姓名（白色）
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 22px serif';
+            ctx.fillText(name, 30, 40);
+            
+            // 职位和机构
+            ctx.fillStyle = '#374151';
+            ctx.font = '16px serif';
+            ctx.fillText(title, 30, 90);
+            ctx.font = '14px serif';
+            ctx.fillText(company, 30, 110);
+            
+            // 联系方式和简介
+            drawContactInfo(email, phone, website, bio, 30, 135);
+        }
+        
+        function drawContactInfo(email, phone, website, bio, x, startY) {
+            ctx.fillStyle = '#6b7280';
+            ctx.font = '12px Arial';
+            let yPos = startY;
+            
+            if (email) { ctx.fillText(email, x, yPos); yPos += 16; }
+            if (phone) { ctx.fillText(phone, x, yPos); yPos += 16; }
+            if (website) { ctx.fillText(website, x, yPos); yPos += 16; }
+            
+            if (bio) {
+                yPos += 10;
+                ctx.fillStyle = '#374151';
+                const bioLines = wrapText(ctx, bio, 340);
+                bioLines.forEach((line, index) => {
+                    ctx.fillText(line, x, yPos + index * 14);
+                });
+            }
+        }
+        
+        function wrapText(ctx, text, maxWidth) {
+            const words = text.split(' ');
+            const lines = [];
+            let currentLine = words[0];
+            
+            for (let i = 1; i < words.length; i++) {
+                const word = words[i];
+                const width = ctx.measureText(currentLine + " " + word).width;
+                if (width < maxWidth) {
+                    currentLine += " " + word;
+                } else {
+                    lines.push(currentLine);
+                    currentLine = word;
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        }
+        
+        // 绑定输入事件
+        document.getElementById('name').addEventListener('input', drawCard);
+        document.getElementById('title').addEventListener('input', drawCard);
+        document.getElementById('company').addEventListener('input', drawCard);
+        document.getElementById('bio').addEventListener('input', drawCard);
+        document.getElementById('email').addEventListener('input', drawCard);
+        document.getElementById('phone').addEventListener('input', drawCard);
+        document.getElementById('website').addEventListener('input', drawCard);
+        document.getElementById('template').addEventListener('change', drawCard);
+        
+        // 导出功能
+        function downloadCard() {
+            const link = document.createElement('a');
+            link.download = 'personal_card.png';
+            link.href = canvas.toDataURL('image/png', 1.0);
+            link.click();
+        }
+        
+        // 保存数据到本地存储
+        function saveData() {
+            const data = {
+                name: document.getElementById('name').value,
+                title: document.getElementById('title').value,
+                company: document.getElementById('company').value,
+                bio: document.getElementById('bio').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                website: document.getElementById('website').value,
+                template: document.getElementById('template').value
+            };
+            localStorage.setItem('personalCardData', JSON.stringify(data));
+            alert('数据已保存！');
+        }
+        
+        // 从本地存储恢复数据
+        function loadData() {
+            const savedData = localStorage.getItem('personalCardData');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                document.getElementById('name').value = data.name || '';
+                document.getElementById('title').value = data.title || '';
+                document.getElementById('company').value = data.company || '';
+                document.getElementById('bio').value = data.bio || '';
+                document.getElementById('email').value = data.email || '';
+                document.getElementById('phone').value = data.phone || '';
+                document.getElementById('website').value = data.website || '';
+                document.getElementById('template').value = data.template || 'business';
+                drawCard();
+                alert('数据已恢复！');
+            } else {
+                alert('没有找到保存的数据！');
+            }
+        }
+        
+        // 页面加载时尝试恢复数据
+        window.onload = function() {
+            const savedData = localStorage.getItem('personalCardData');
+            if (savedData) {
+                loadData();
+            } else {
+                drawCard();
+            }
+        };
+        
+        // 初始绘制
+        drawCard();
+    </script>
+</body>
+</html>

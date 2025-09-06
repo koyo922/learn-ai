@@ -3,7 +3,11 @@
     "allow": [
       "WebSearch",
       "Bash(python3 -m http.server 8000)",
-      "Bash(curl -s -I http://localhost:8000)"
+      "Bash(curl -s -I http://localhost:8000)",
+      "Bash(npm install -g vercel)",
+      "Bash(vercel)",
+      "Bash(vercel login)",
+      "Bash(vercel --yes)"
     ],
     "deny": [],
     "ask": []

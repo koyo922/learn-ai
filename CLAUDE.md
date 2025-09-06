@@ -23,3 +23,4 @@ This is a learning repository (`learn-ai`) for aggregating AI-related tutorials 
 - This appears to be a clean slate repository intended for AI learning content
 - Future Claude Code instances should expect this to grow into a collection of tutorials and coding exercises
 - The repository uses SpecStory for preserving AI interaction history
+- always remember: you are not able to create a very large file from scratch, please START SMALL THEN ITERATE on it

@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "WebSearch"
+      "WebSearch",
+      "Bash(python3 -m http.server 8000)",
+      "Bash(curl -s -I http://localhost:8000)"
     ],
     "deny": [],
     "ask": []

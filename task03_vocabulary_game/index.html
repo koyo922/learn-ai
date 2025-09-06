@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高考背单词</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+        
+        .progress-bar {
+            background: #e5e7eb;
+            border-radius: 10px;
+            height: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: #2563eb;
+            height: 100%;
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .word-card {
+            padding: 40px 20px;
+            text-align: center;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .word {
+            font-size: 36px;
+            font-weight: bold;
+            color: #2563eb;
+            margin-bottom: 20px;
+        }
+        
+        .meaning {
+            font-size: 18px;
+            color: #6b7280;
+            display: none;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+        
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            background: white;
+            border-radius: 15px;
+            padding: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background: #2563eb;
+            color: white;
+        }
+        
+        .stats {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .nav-tabs {
+                padding: 3px;
+                margin-bottom: 15px;
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .tab {
+                padding: 10px;
+                font-size: 14px;
+            }
+            
+            .word {
+                font-size: 24px;
+            }
+            
+            .word-card {
+                padding: 30px 15px;
+                min-height: 180px;
+            }
+            
+            .btn {
+                padding: 12px 20px;
+                font-size: 14px;
+                min-width: 80px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+            
+            .stat-item {
+                padding: 12px;
+            }
+            
+            .stat-number {
+                font-size: 1.5em;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .header h1 {
+                font-size: 20px;
+            }
+            
+            .word {
+                font-size: 20px;
+            }
+            
+            .word-card {
+                padding: 20px 10px;
+            }
+            
+            .btn {
+                padding: 10px 15px;
+                font-size: 13px;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>高考背单词</h1>
+            <p>简单高效，专注学习</p>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            
+            <div class="stats" id="stats">
+                今日学习: 0/10 | 总计: 0 词
+            </div>
+        </div>
+        
+        <div class="nav-tabs">
+            <button class="tab active" onclick="switchTab('learn')">每日学习</button>
+            <button class="tab" onclick="switchTab('test')">快速测试</button>
+            <button class="tab" onclick="switchTab('review')" id="reviewTab">错词复习 <span id="reviewCount">(0)</span></button>
+        </div>
+        
+        <!-- 学习模式 -->
+        <div id="learnMode">
+            <div class="card">
+                <div class="word-card" id="wordCard">
+                    <div class="word" id="currentWord">点击开始学习</div>
+                    <div style="font-size: 14px; color: #888; margin: 5px 0;" id="currentPhonetic"></div>
+                    <div class="meaning" id="currentMeaning">点击单词查看中文释义</div>
+                    <div style="font-size: 14px; color: #666; margin-top: 10px; font-style: italic;" id="currentExample"></div>
+                    
+                    <div class="button-group">
+                        <button class="btn btn-secondary" onclick="playPronunciation()">🔊 发音 (P)</button>
+                        <button class="btn btn-secondary" onclick="showMeaning()">显示释义 (S)</button>
+                        <button class="btn btn-primary" onclick="nextWord()">下一词 (N)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 测试模式 -->
+        <div id="testMode" class="hidden">
+            <div class="card">
+                <div class="word-card">
+                    <div class="word" id="testWord">准备开始测试</div>
+                    
+                    <div class="button-group" style="flex-direction: column; margin-top: 30px;">
+                        <button class="btn btn-secondary" onclick="selectAnswer(0)" id="option0">1. 选项A</button>
+                        <button class="btn btn-secondary" onclick="selectAnswer(1)" id="option1">2. 选项B</button>
+                        <button class="btn btn-secondary" onclick="selectAnswer(2)" id="option2">3. 选项C</button>
+                        <button class="btn btn-secondary" onclick="selectAnswer(3)" id="option3">4. 选项D</button>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-primary" onclick="startTest()" id="startTestBtn">开始测试</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 错词复习模式 -->
+        <div id="reviewMode" class="hidden">
+            <div class="card">
+                <div class="word-card">
+                    <div id="reviewStatus">点击开始复习错词</div>
+                    <div class="word" id="reviewWord" style="display: none;">-</div>
+                    <div style="font-size: 14px; color: #888; margin: 5px 0;" id="reviewPhonetic"></div>
+                    <div class="meaning" id="reviewMeaning" style="display: none;">-</div>
+                    <div style="font-size: 14px; color: #666; margin-top: 10px; font-style: italic;" id="reviewExample" style="display: none;"></div>
+                    
+                    <div class="button-group">
+                        <button class="btn btn-secondary" onclick="playReviewPronunciation()" style="display: none;" id="reviewPlayBtn">🔊 发音 (P)</button>
+                        <button class="btn btn-secondary" onclick="showReviewMeaning()" style="display: none;" id="reviewShowBtn">显示释义 (S)</button>
+                        <button class="btn btn-primary" onclick="nextReviewWord()" style="display: none;" id="reviewNextBtn">下一词 (N)</button>
+                        <button class="btn btn-primary" onclick="startReview()" id="reviewStartBtn">开始复习</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 快捷键说明 -->
+        <div style="text-align: center; color: #888; font-size: 12px; margin-top: 20px; padding: 10px;">
+            <details>
+                <summary style="cursor: pointer;">⌨️ 键盘快捷键</summary>
+                <div style="margin-top: 10px; line-height: 1.6;">
+                    <strong>学习/复习模式:</strong> P-发音 | S-显示释义 | N/空格-下一词<br>
+                    <strong>测试模式:</strong> 1/2/3/4-选择选项
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <script>
+        // 高考核心词汇数据 (分批加载以避免文件过大)
+        const vocabulary = [
+            { word: 'abandon', meaning: '放弃，抛弃', phonetic: '/əˈbændən/', example: 'Don\'t abandon hope.' },
+            { word: 'ability', meaning: '能力，才能', phonetic: '/əˈbɪləti/', example: 'He has great ability in math.' },
+            { word: 'abroad', meaning: '在国外，到海外', phonetic: '/əˈbrɔːd/', example: 'She went abroad to study.' },
+            { word: 'absent', meaning: '缺席的，心不在焉的', phonetic: '/ˈæbsənt/', example: 'He was absent from school.' },
+            { word: 'absolute', meaning: '绝对的，完全的', phonetic: '/ˈæbsəluːt/', example: 'That\'s absolute nonsense!' },
+            { word: 'absorb', meaning: '吸收，吸引', phonetic: '/əbˈzɔːrb/', example: 'Plants absorb water.' },
+            { word: 'abstract', meaning: '抽象的，摘要', phonetic: '/ˈæbstrækt/', example: 'Love is an abstract concept.' },
+            { word: 'abundant', meaning: '丰富的，大量的', phonetic: '/əˈbʌndənt/', example: 'Fish are abundant in the lake.' },
+            { word: 'abuse', meaning: '滥用，虐待', phonetic: '/əˈbjuːs/', example: 'Drug abuse is dangerous.' },
+            { word: 'academic', meaning: '学术的，理论的', phonetic: '/ˌækəˈdemɪk/', example: 'She has good academic records.' },
+            { word: 'accept', meaning: '接受，承认', phonetic: '/əkˈsept/', example: 'I accept your apology.' },
+            { word: 'access', meaning: '接近，通道', phonetic: '/ˈækses/', example: 'Students have access to the library.' },
+            { word: 'accident', meaning: '意外，事故', phonetic: '/ˈæksɪdənt/', example: 'There was a car accident.' },
+            { word: 'accommodate', meaning: '容纳，适应', phonetic: '/əˈkɒmədeɪt/', example: 'This hotel can accommodate 200 guests.' },
+            { word: 'accompany', meaning: '陪伴，伴随', phonetic: '/əˈkʌmpəni/', example: 'I\'ll accompany you to the station.' },
+            { word: 'accomplish', meaning: '完成，实现', phonetic: '/əˈkʌmplɪʃ/', example: 'We accomplished our goal.' },
+            { word: 'account', meaning: '账户，解释', phonetic: '/əˈkaʊnt/', example: 'Open a bank account.' },
+            { word: 'accurate', meaning: '准确的，精确的', phonetic: '/ˈækjərət/', example: 'The report is accurate.' },
+            { word: 'achieve', meaning: '达到，完成', phonetic: '/əˈtʃiːv/', example: 'He achieved his dream.' },
+            { word: 'acquire', meaning: '获得，学会', phonetic: '/əˈkwaɪə/', example: 'She acquired a new skill.' },
+            { word: 'across', meaning: '穿过，在对面', phonetic: '/əˈkrɒs/', example: 'Walk across the street.' },
+            { word: 'active', meaning: '积极的，活跃的', phonetic: '/ˈæktɪv/', example: 'He is an active student.' },
+            { word: 'actual', meaning: '实际的，真实的', phonetic: '/ˈæktʃuəl/', example: 'What\'s the actual cost?' },
+            { word: 'adapt', meaning: '适应，改编', phonetic: '/əˈdæpt/', example: 'Animals adapt to their environment.' },
+            { word: 'addition', meaning: '加法，增加', phonetic: '/əˈdɪʃən/', example: 'In addition to math, I study English.' },
+            { word: 'adequate', meaning: '充足的，适当的', phonetic: '/ˈædɪkwət/', example: 'We need adequate supplies.' },
+            { word: 'adjust', meaning: '调整，适应', phonetic: '/əˈdʒʌst/', example: 'Please adjust the volume.' },
+            { word: 'administration', meaning: '管理，行政', phonetic: '/ədˌmɪnɪˈstreɪʃən/', example: 'The school administration is efficient.' },
+            { word: 'admit', meaning: '承认，允许进入', phonetic: '/ədˈmɪt/', example: 'I admit my mistake.' },
+            { word: 'adopt', meaning: '采用，收养', phonetic: '/əˈdɒpt/', example: 'They decided to adopt a child.' }
+        ];
+        
+        let currentMode = 'learn';
+        let currentIndex = 0;
+        let dailyProgress = 0;
+        let totalLearned = 0;
+        let testQuestions = [];
+        let currentTestIndex = 0;
+        let correctAnswer = 0;
+        let wrongWords = []; // 错词本
+        let testScore = { correct: 0, total: 0 };
+        let reviewIndex = 0;
+        
+        // 初始化
+        function init() {
+            loadProgress();
+            updateStats();
+            updateReviewCount();
+            startLearning();
+        }
+        
+        // 切换标签页
+        function switchTab(mode) {
+            currentMode = mode;
+            
+            // 更新标签样式
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // 隐藏所有模式
+            document.getElementById('learnMode').classList.add('hidden');
+            document.getElementById('testMode').classList.add('hidden');
+            document.getElementById('reviewMode').classList.add('hidden');
+            
+            // 显示对应模式
+            if (mode === 'learn') {
+                document.getElementById('learnMode').classList.remove('hidden');
+                startLearning();
+            } else if (mode === 'test') {
+                document.getElementById('testMode').classList.remove('hidden');
+                prepareTest();
+            } else if (mode === 'review') {
+                document.getElementById('reviewMode').classList.remove('hidden');
+                prepareReview();
+            }
+        }
+        
+        // 开始学习
+        function startLearning() {
+            if (dailyProgress >= 10) {
+                document.getElementById('currentWord').textContent = '今日学习完成！';
+                document.getElementById('currentPhonetic').textContent = '';
+                document.getElementById('currentMeaning').textContent = '明天继续努力吧 💪';
+                document.getElementById('currentExample').textContent = '';
+                document.getElementById('currentMeaning').style.display = 'block';
+                return;
+            }
+            
+            const word = vocabulary[currentIndex];
+            document.getElementById('currentWord').textContent = word.word;
+            document.getElementById('currentPhonetic').textContent = word.phonetic;
+            document.getElementById('currentMeaning').textContent = word.meaning;
+            document.getElementById('currentExample').textContent = word.example;
+            document.getElementById('currentMeaning').style.display = 'none';
+            document.getElementById('currentExample').style.display = 'none';
+            
+            // 自动播放发音
+            setTimeout(() => {
+                playPronunciation();
+            }, 500);
+        }
+        
+        // 显示释义
+        function showMeaning() {
+            document.getElementById('currentMeaning').style.display = 'block';
+            document.getElementById('currentExample').style.display = 'block';
+        }
+        
+        // 播放发音
+        function playPronunciation() {
+            const word = vocabulary[currentIndex];
+            if (word && word.word) {
+                // 使用Web Speech API进行发音
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(word.word);
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.8;
+                    speechSynthesis.speak(utterance);
+                } else {
+                    alert('您的浏览器不支持语音播放功能');
+                }
+            }
+        }
+        
+        // 下一个单词
+        function nextWord() {
+            dailyProgress++;
+            totalLearned++;
+            currentIndex = (currentIndex + 1) % vocabulary.length;
+            
+            saveProgress();
+            updateStats();
+            startLearning();
+        }
+        
+        // 准备测试
+        function prepareTest() {
+            document.getElementById('testWord').textContent = '准备开始测试';
+            document.getElementById('startTestBtn').style.display = 'inline-block';
+            
+            // 隐藏选项
+            for (let i = 0; i < 4; i++) {
+                document.getElementById(`option${i}`).style.display = 'none';
+            }
+        }
+        
+        // 开始测试
+        function startTest() {
+            if (vocabulary.length < 4) return;
+            
+            // 隐藏开始测试按钮
+            document.getElementById('startTestBtn').style.display = 'none';
+            
+            // 随机选择一个单词
+            const randomIndex = Math.floor(Math.random() * vocabulary.length);
+            const correctWord = vocabulary[randomIndex];
+            
+            // 生成干扰项
+            const options = [correctWord.meaning];
+            while (options.length < 4) {
+                const randomOption = vocabulary[Math.floor(Math.random() * vocabulary.length)].meaning;
+                if (!options.includes(randomOption)) {
+                    options.push(randomOption);
+                }
+            }
+            
+            // 打乱选项
+            const shuffled = options.sort(() => Math.random() - 0.5);
+            correctAnswer = shuffled.indexOf(correctWord.meaning);
+            
+            // 显示题目
+            document.getElementById('testWord').textContent = correctWord.word;
+            
+            // 显示选项
+            for (let i = 0; i < 4; i++) {
+                const btn = document.getElementById(`option${i}`);
+                btn.textContent = `${i + 1}. ${shuffled[i]}`;
+                btn.style.display = 'block';
+                btn.style.background = '#f3f4f6';
+                btn.style.color = '#374151';
+            }
+        }
+        
+        // 选择答案
+        function selectAnswer(index) {
+            const buttons = document.querySelectorAll('[id^="option"]');
+            
+            // 更新测试统计
+            testScore.total++;
+            
+            // 重置所有按钮样式
+            buttons.forEach(btn => {
+                btn.style.background = '#f3f4f6';
+                btn.style.color = '#374151';
+            });
+            
+            // 显示正确答案
+            buttons[correctAnswer].style.background = '#10b981';
+            buttons[correctAnswer].style.color = 'white';
+            
+            // 如果选错了，显示错误并加入错词本
+            if (index !== correctAnswer) {
+                buttons[index].style.background = '#ef4444';
+                buttons[index].style.color = 'white';
+                
+                // 添加到错词本
+                const testWord = document.getElementById('testWord').textContent;
+                if (testWord && !wrongWords.includes(testWord)) {
+                    wrongWords.push(testWord);
+                    updateReviewCount();
+                    saveProgress();
+                }
+            } else {
+                testScore.correct++;
+            }
+            
+            // 显示答题结果
+            const resultText = index === correctAnswer ? '✓ 正确！' : '✗ 答错了';
+            // 在正确答案按钮上添加结果提示
+            const correctBtn = buttons[correctAnswer];
+            const originalText = correctBtn.textContent.split(' ✓')[0].split(' ✗')[0];
+            correctBtn.textContent = originalText + ' ' + resultText;
+            
+            // 2秒后开始下一题
+            setTimeout(startTest, 2000);
+        }
+        
+        // 更新统计
+        function updateStats() {
+            document.getElementById('stats').textContent = 
+                `今日学习: ${dailyProgress}/10 | 总计: ${totalLearned} 词`;
+            
+            const progress = (dailyProgress / 10) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+        }
+        
+        // 保存进度
+        function saveProgress() {
+            const progress = {
+                dailyProgress,
+                totalLearned,
+                currentIndex,
+                wrongWords,
+                testScore,
+                date: new Date().toDateString()
+            };
+            localStorage.setItem('vocabProgress', JSON.stringify(progress));
+        }
+        
+        // 加载进度
+        function loadProgress() {
+            const saved = localStorage.getItem('vocabProgress');
+            if (saved) {
+                const progress = JSON.parse(saved);
+                
+                // 检查是否是新的一天
+                if (progress.date !== new Date().toDateString()) {
+                    dailyProgress = 0;
+                } else {
+                    dailyProgress = progress.dailyProgress || 0;
+                }
+                
+                totalLearned = progress.totalLearned || 0;
+                currentIndex = progress.currentIndex || 0;
+                wrongWords = progress.wrongWords || [];
+                testScore = progress.testScore || { correct: 0, total: 0 };
+            }
+        }
+        
+        // 准备错词复习
+        function prepareReview() {
+            updateReviewCount();
+            
+            // 重置按钮状态
+            document.getElementById('reviewPlayBtn').style.display = 'none';
+            document.getElementById('reviewShowBtn').style.display = 'none';
+            document.getElementById('reviewNextBtn').style.display = 'none';
+            document.getElementById('reviewStartBtn').style.display = 'inline-block';
+            document.getElementById('reviewWord').style.display = 'none';
+            
+            if (wrongWords.length === 0) {
+                document.getElementById('reviewStatus').textContent = '暂无错词需要复习 💪';
+                return;
+            }
+            document.getElementById('reviewStatus').textContent = `共有 ${wrongWords.length} 个错词需要复习`;
+        }
+        
+        // 开始错词复习
+        function startReview() {
+            if (wrongWords.length === 0) {
+                alert('暂无错词需要复习！');
+                return;
+            }
+            
+            reviewIndex = 0;
+            showReviewWord();
+            
+            // 显示复习按钮，隐藏开始按钮
+            document.getElementById('reviewPlayBtn').style.display = 'inline-block';
+            document.getElementById('reviewShowBtn').style.display = 'inline-block';
+            document.getElementById('reviewNextBtn').style.display = 'inline-block';
+            document.getElementById('reviewStartBtn').style.display = 'none';
+        }
+        
+        // 显示复习单词
+        function showReviewWord() {
+            if (reviewIndex >= wrongWords.length) {
+                document.getElementById('reviewStatus').textContent = '复习完成！✨';
+                document.getElementById('reviewWord').style.display = 'none';
+                // 复习完成，重置按钮
+                document.getElementById('reviewPlayBtn').style.display = 'none';
+                document.getElementById('reviewShowBtn').style.display = 'none';
+                document.getElementById('reviewNextBtn').style.display = 'none';
+                document.getElementById('reviewStartBtn').style.display = 'inline-block';
+                return;
+            }
+            
+            const wrongWordText = wrongWords[reviewIndex];
+            const wordData = vocabulary.find(w => w.word === wrongWordText);
+            
+            if (wordData) {
+                document.getElementById('reviewStatus').textContent = `复习进度: ${reviewIndex + 1}/${wrongWords.length}`;
+                document.getElementById('reviewWord').textContent = wordData.word;
+                document.getElementById('reviewWord').style.display = 'block';
+                document.getElementById('reviewPhonetic').textContent = wordData.phonetic;
+                document.getElementById('reviewMeaning').textContent = wordData.meaning;
+                document.getElementById('reviewExample').textContent = wordData.example;
+                document.getElementById('reviewMeaning').style.display = 'none';
+                document.getElementById('reviewExample').style.display = 'none';
+                
+                // 自动播放发音
+                setTimeout(() => {
+                    playReviewPronunciation();
+                }, 500);
+            }
+        }
+        
+        // 显示复习释义
+        function showReviewMeaning() {
+            document.getElementById('reviewMeaning').style.display = 'block';
+            document.getElementById('reviewExample').style.display = 'block';
+        }
+        
+        // 播放复习发音
+        function playReviewPronunciation() {
+            const word = wrongWords[reviewIndex];
+            if (word && 'speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8;
+                speechSynthesis.speak(utterance);
+            }
+        }
+        
+        // 下一个复习单词
+        function nextReviewWord() {
+            reviewIndex++;
+            showReviewWord();
+        }
+        
+        // 更新错词数量显示
+        function updateReviewCount() {
+            document.getElementById('reviewCount').textContent = `(${wrongWords.length})`;
+        }
+        
+        // 键盘快捷键支持
+        document.addEventListener('keydown', function(event) {
+            // 防止在输入框中触发
+            if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
+            
+            const key = event.key.toLowerCase();
+            
+            // 学习模式快捷键
+            if (currentMode === 'learn') {
+                switch(key) {
+                    case 'p':
+                        event.preventDefault();
+                        playPronunciation();
+                        break;
+                    case 's':
+                        event.preventDefault();
+                        showMeaning();
+                        break;
+                    case 'n':
+                    case ' ': // 空格键也可以切换到下一词
+                        event.preventDefault();
+                        nextWord();
+                        break;
+                }
+            }
+            
+            // 复习模式快捷键
+            if (currentMode === 'review') {
+                switch(key) {
+                    case 'p':
+                        event.preventDefault();
+                        playReviewPronunciation();
+                        break;
+                    case 's':
+                        event.preventDefault();
+                        showReviewMeaning();
+                        break;
+                    case 'n':
+                    case ' ':
+                        event.preventDefault();
+                        nextReviewWord();
+                        break;
+                }
+            }
+            
+            // 测试模式快捷键 (1-4 选择选项)
+            if (currentMode === 'test') {
+                switch(key) {
+                    case '1':
+                        event.preventDefault();
+                        selectAnswer(0);
+                        break;
+                    case '2':
+                        event.preventDefault();
+                        selectAnswer(1);
+                        break;
+                    case '3':
+                        event.preventDefault();
+                        selectAnswer(2);
+                        break;
+                    case '4':
+                        event.preventDefault();
+                        selectAnswer(3);
+                        break;
+                }
+            }
+        });
+
+        // 页面加载时初始化
+        window.onload = init;
+    </script>
+</body>
+</html>

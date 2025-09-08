@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lark Bookmarks - 设置</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="container">
+    <!-- 头部 -->
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <img src="../icons/icon48.png" alt="Lark Bookmarks" class="logo-img">
+          <div class="title-group">
+            <h1>Lark Bookmarks</h1>
+            <p>飞书书签收藏器 - 设置</p>
+          </div>
+        </div>
+        <div class="version">v1.0.0</div>
+      </div>
+    </header>
+
+    <!-- 主体内容 -->
+    <main class="main">
+      <!-- 导航标签 -->
+      <nav class="tabs">
+        <button class="tab-btn active" data-tab="account">账户设置</button>
+        <button class="tab-btn" data-tab="tables">表格管理</button>
+        <button class="tab-btn" data-tab="shortcuts">快捷键</button>
+        <button class="tab-btn" data-tab="sync">数据同步</button>
+        <button class="tab-btn" data-tab="about">关于</button>
+      </nav>
+
+      <!-- 标签内容 -->
+      <div class="tab-content">
+        <!-- 账户设置 -->
+        <section id="account-tab" class="tab-panel active">
+          <h2>飞书账户</h2>
+          
+          <!-- 未登录状态 -->
+          <div id="login-section" class="card">
+            <div class="login-info">
+              <h3>连接飞书账户</h3>
+              <p>选择授权方式以访问您的飞书多维表格</p>
+            </div>
+            
+            <!-- 授权方式选择 -->
+            <div class="auth-methods">
+              <div class="auth-method-tabs">
+                <button class="auth-tab active" data-method="user">用户授权 (推荐)</button>
+                <button class="auth-tab" data-method="app">应用凭据</button>
+              </div>
+              
+              <!-- 用户授权方式 -->
+              <div id="user-auth" class="auth-panel active">
+                <div class="auth-description">
+                  <div class="auth-benefits">
+                    <h4>✅ 推荐使用用户授权</h4>
+                    <ul>
+                      <li>可以访问您个人的所有多维表格</li>
+                      <li>安全的OAuth 2.0授权流程</li>
+                      <li>无需手动输入敏感信息</li>
+                      <li>权限可控，随时可撤销</li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div class="oauth-section">
+                  <div class="form-group">
+                    <label for="oauthAppId">飞书应用 App ID</label>
+                    <input type="text" id="oauthAppId" placeholder="输入您的飞书应用 App ID">
+                    <small>需要先在飞书开放平台创建应用并配置OAuth重定向地址</small>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="oauthAppSecret">飞书应用 App Secret</label>
+                    <input type="password" id="oauthAppSecret" placeholder="输入您的飞书应用 App Secret">
+                    <small>OAuth令牌交换时需要，请妥善保管</small>
+                  </div>
+                  
+                  <button class="btn btn-primary btn-large" id="oauthLoginBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
+                      <path d="M12 0C5.374 0 0 5.373 0 12s5.374 12 12 12 12-5.373 12-12S18.626 0 12 0zm5.568 8.16c-.169 1.858-.896 3.605-2.068 4.776-1.172 1.171-2.918 1.898-4.776 2.067C9.851 15.13 9 14.28 9 13.278c0-1.001.851-1.851 1.724-1.724 1.858-.169 3.605-.896 4.776-2.068C16.672 8.315 17.399 6.568 17.568 4.71 17.695 3.838 16.845 2.987 15.844 2.987c-1.001 0-1.851.851-1.724 1.724.169 1.858.896 3.605 2.068 4.776 1.172 1.171 2.918 1.898 4.776 2.067C21.837 11.681 22.688 12.532 22.688 13.533c0 1.001-.851 1.851-1.724 1.724z"/>
+                    </svg>
+                    <span class="btn-text">使用飞书账户登录</span>
+                    <span class="btn-loading" style="display: none;">
+                      <svg class="spinner" width="16" height="16" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" opacity="0.25"/>
+                        <path fill="currentColor" d="M4 12a8 8 0 0 1 8-8v2a6 6 0 0 0-6 6h2z" opacity="0.75"/>
+                      </svg>
+                      授权中...
+                    </span>
+                  </button>
+                  
+                  <div class="oauth-steps">
+                    <h4>授权步骤：</h4>
+                    <ol>
+                      <li>点击上方按钮打开飞书授权页面</li>
+                      <li>使用您的飞书账户登录</li>
+                      <li>确认授权访问多维表格权限</li>
+                      <li>授权完成后自动返回此页面</li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- 应用凭据方式 -->
+              <div id="app-auth" class="auth-panel">
+                <div class="auth-description">
+                  <div class="auth-warning">
+                    <h4>⚠️ 应用凭据限制</h4>
+                    <ul>
+                      <li>只能访问应用自己创建的表格</li>
+                      <li>无法访问您个人的多维表格</li>
+                      <li>需要手动输入敏感信息</li>
+                      <li>适用于企业内部应用场景</li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div class="app-credentials">
+                  <div class="form-group">
+                    <label for="clientId">App ID</label>
+                    <input type="text" id="clientId" placeholder="输入您的飞书应用 App ID">
+                    <small>在飞书开放平台创建应用后获得</small>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="clientSecret">App Secret</label>
+                    <input type="password" id="clientSecret" placeholder="输入您的飞书应用 App Secret">
+                    <small>请妥善保管，不要泄露给他人</small>
+                  </div>
+                  
+                  <button class="btn btn-secondary" id="loginBtn">
+                    <span class="btn-text">保存应用凭据</span>
+                    <span class="btn-loading" style="display: none;">
+                      <svg class="spinner" width="16" height="16" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" opacity="0.25"/>
+                        <path fill="currentColor" d="M4 12a8 8 0 0 1 8-8v2a6 6 0 0 0-6 6h2z" opacity="0.75"/>
+                      </svg>
+                      保存中...
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="help-links">
+              <a href="https://open.feishu.cn/app" target="_blank">创建飞书应用</a>
+              <a href="#" id="helpBtn">设置帮助</a>
+            </div>
+          </div>
+
+          <!-- 已登录状态 -->
+          <div id="account-info" class="card" style="display: none;">
+            <div class="account-header">
+              <div class="user-info">
+                <div class="user-avatar">
+                  <img id="userAvatar" src="" alt="用户头像">
+                </div>
+                <div class="user-details">
+                  <h3 id="userName">用户名</h3>
+                  <p id="userEmail">user@example.com</p>
+                </div>
+              </div>
+              <div class="account-status">
+                <span class="status-badge connected">已连接</span>
+              </div>
+            </div>
+            
+            <div class="account-actions">
+              <button class="btn btn-outline" id="refreshTokenBtn">刷新令牌</button>
+              <button class="btn btn-danger" id="logoutBtn">断开连接</button>
+            </div>
+          </div>
+
+          <!-- 状态消息 -->
+          <div id="accountStatus" class="status-message" style="display: none;"></div>
+        </section>
+
+        <!-- 表格管理 -->
+        <section id="tables-tab" class="tab-panel">
+          <h2>多维表格管理</h2>
+          
+          <div class="card">
+            <div class="table-selector">
+              <div class="form-group">
+                <label for="tableSelect">默认收藏表格</label>
+                <select id="tableSelect" class="form-select">
+                  <option value="">请选择表格...</option>
+                </select>
+                <small>新书签将保存到此表格中</small>
+              </div>
+              
+              <button class="btn btn-secondary" id="refreshTablesBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                </svg>
+                刷新表格列表
+              </button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>手动添加表格</h3>
+            <p>如果上方列表为空，您可以手动输入多维表格的Token</p>
+            
+            <div class="form-group">
+              <label for="manualTableToken">表格 App Token</label>
+              <input type="text" id="manualTableToken" placeholder="例如: bascnCMII2sBuEXfMkrLswUoqfh">
+              <small>从多维表格URL中获取，或使用分享链接中的Token</small>
+            </div>
+            
+            <div class="form-group">
+              <label for="manualTableName">表格名称（可选）</label>
+              <input type="text" id="manualTableName" placeholder="例如: test_chrome_ext">
+              <small>为表格设置一个便于识别的名称</small>
+            </div>
+            
+            <button class="btn btn-primary" id="addManualTableBtn">添加表格</button>
+          </div>
+
+          <div class="card">
+            <h3>表格结构检查</h3>
+            <p>检查选中表格是否包含必要的字段</p>
+            
+            <div id="tableStructure" class="table-structure">
+              <div class="structure-check">
+                <span class="field-name">标题</span>
+                <span class="field-status unknown">未检查</span>
+              </div>
+              <div class="structure-check">
+                <span class="field-name">URL</span>
+                <span class="field-status unknown">未检查</span>
+              </div>
+              <div class="structure-check">
+                <span class="field-name">描述</span>
+                <span class="field-status unknown">未检查</span>
+              </div>
+              <div class="structure-check">
+                <span class="field-name">标签</span>
+                <span class="field-status unknown">未检查</span>
+              </div>
+              <div class="structure-check">
+                <span class="field-name">收藏时间</span>
+                <span class="field-status unknown">未检查</span>
+              </div>
+              <div class="structure-check">
+                <span class="field-name">状态</span>
+                <span class="field-status unknown">未检查</span>
+              </div>
+            </div>
+            
+            <button class="btn btn-outline" id="checkStructureBtn">检查表格结构</button>
+          </div>
+        </section>
+
+        <!-- 快捷键设置 -->
+        <section id="shortcuts-tab" class="tab-panel">
+          <h2>快捷键设置</h2>
+          
+          <div class="card">
+            <div class="shortcut-list">
+              <div class="shortcut-item">
+                <div class="shortcut-info">
+                  <h3>快速收藏</h3>
+                  <p>一键收藏当前页面到默认表格</p>
+                </div>
+                <div class="shortcut-key">
+                  <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>B</kbd>
+                  <small>(Mac: Cmd + Shift + B)</small>
+                </div>
+              </div>
+              
+              <div class="shortcut-item">
+                <div class="shortcut-info">
+                  <h3>收藏选中内容</h3>
+                  <p>将选中的文本内容保存为摘录</p>
+                </div>
+                <div class="shortcut-key">
+                  <kbd>Ctrl</kbd> + <kbd>S</kbd>
+                  <small>(选中文本时)</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>其他功能</h3>
+            <ul class="feature-list">
+              <li>点击扩展图标打开收藏弹窗</li>
+              <li>右键菜单快速收藏页面或链接</li>
+              <li>选中文本后显示收藏工具栏</li>
+              <li>页面右下角快速收藏按钮</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- 数据同步 -->
+        <section id="sync-tab" class="tab-panel">
+          <h2>数据同步</h2>
+          
+          <div class="card">
+            <h3>本地缓存</h3>
+            <div class="sync-stats">
+              <div class="stat-item">
+                <span class="stat-label">本地书签数量</span>
+                <span class="stat-value" id="localBookmarkCount">0</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">最后同步时间</span>
+                <span class="stat-value" id="lastSyncTime">从未同步</span>
+              </div>
+            </div>
+            
+            <div class="sync-actions">
+              <button class="btn btn-primary" id="syncNowBtn">立即同步</button>
+              <button class="btn btn-outline" id="clearCacheBtn">清空缓存</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>导入导出</h3>
+            <p>备份或迁移您的书签数据</p>
+            
+            <div class="import-export">
+              <button class="btn btn-secondary" id="exportBtn">导出书签</button>
+              <input type="file" id="importFile" accept=".json" style="display: none;">
+              <button class="btn btn-secondary" id="importBtn">导入书签</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 关于 -->
+        <section id="about-tab" class="tab-panel">
+          <h2>关于 Lark Bookmarks</h2>
+          
+          <div class="card">
+            <div class="about-content">
+              <h3>版本信息</h3>
+              <p>当前版本：v1.0.0</p>
+              <p>发布日期：2024年1月</p>
+            </div>
+            
+            <div class="about-content">
+              <h3>功能特性</h3>
+              <ul>
+                <li>一键收藏网页到飞书多维表格</li>
+                <li>智能提取页面信息和元数据</li>
+                <li>支持标签分类和批量管理</li>
+                <li>快捷键和右键菜单操作</li>
+                <li>本地缓存和数据同步</li>
+              </ul>
+            </div>
+            
+            <div class="about-content">
+              <h3>支持与反馈</h3>
+              <div class="support-links">
+                <a href="https://github.com/your-repo/lark-bookmarks" target="_blank">GitHub 项目</a>
+                <a href="mailto:support@example.com">联系我们</a>
+                <a href="#" id="feedbackBtn">问题反馈</a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- 帮助弹窗 -->
+  <div id="helpModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>设置帮助</h3>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h4>如何获取飞书应用凭据？</h4>
+        <ol>
+          <li>访问 <a href="https://open.feishu.cn/app" target="_blank">飞书开放平台</a></li>
+          <li>登录您的飞书账户</li>
+          <li>创建新的企业自建应用</li>
+          <li>在应用设置中获取 App ID 和 App Secret</li>
+          <li>在权限管理中申请"多维表格"权限</li>
+          <li>将获取的凭据填入上方表单</li>
+        </ol>
+        
+        <h4>权限说明</h4>
+        <p>本扩展需要以下权限：</p>
+        <ul>
+          <li>访问活动标签页 - 获取当前页面信息</li>
+          <li>存储权限 - 保存设置和缓存数据</li>
+          <li>飞书 API 访问 - 同步数据到多维表格</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="simple-options.js"></script>
+</body>
+</html>

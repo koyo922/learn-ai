@@ -1,0 +1,316 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 320px;
+  min-height: 480px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #1f2937;
+  background: #ffffff;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 480px;
+}
+
+/* 头部样式 */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f8fafc;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-img {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+}
+
+.app-name {
+  font-weight: 600;
+  color: #374151;
+}
+
+.settings-btn {
+  padding: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 4px;
+  color: #6b7280;
+  transition: all 0.2s;
+}
+
+.settings-btn:hover {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+/* 主体内容 */
+.main {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+/* 页面预览卡片 */
+.page-preview {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #f9fafb;
+}
+
+.page-favicon img {
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+}
+
+.page-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.page-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #111827;
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.page-url {
+  font-size: 12px;
+  color: #6b7280;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 表单样式 */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+/* 标签容器 */
+.tags-container {
+  position: relative;
+}
+
+.tags-input {
+  margin-bottom: 8px;
+}
+
+.tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 20px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.tag-remove {
+  cursor: pointer;
+  color: #6b7280;
+  font-weight: bold;
+}
+
+.tag-remove:hover {
+  color: #ef4444;
+}
+
+/* 状态消息 */
+.status-message {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  display: none;
+}
+
+.status-message.success {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.status-message.error {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.status-message.info {
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+/* 底部按钮 */
+.footer {
+  display: flex;
+  gap: 8px;
+  padding: 16px;
+  border-top: 1px solid #e5e7eb;
+  background: #f8fafc;
+}
+
+.btn {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1px solid;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: #ffffff;
+  color: #374151;
+  border-color: #d1d5db;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #f3f4f6;
+}
+
+.btn-primary {
+  background: #3b82f6;
+  color: #ffffff;
+  border-color: #3b82f6;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #2563eb;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 登录提示 */
+.login-prompt {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.login-content {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  max-width: 280px;
+}
+
+.login-content h3 {
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.login-content p {
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+
+/* 响应式调整 */
+@media (max-height: 500px) {
+  .container {
+    height: auto;
+    min-height: 400px;
+  }
+  
+  .main {
+    max-height: 300px;
+  }
+}

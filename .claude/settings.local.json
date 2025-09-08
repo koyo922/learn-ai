@@ -7,7 +7,9 @@
       "Bash(npm install -g vercel)",
       "Bash(vercel)",
       "Bash(vercel login)",
-      "Bash(vercel --yes)"
+      "Bash(vercel --yes)",
+      "Bash(python3 -c \"\nfrom PIL import Image, ImageDraw\nimport os\n\n# 创建图标目录\nos.makedirs(''/Users/user/workspace/learn-ai/task04_chrome_favorite_lark/icons'', exist_ok=True)\n\n# 创建不同尺寸的图标\nsizes = [16, 32, 48, 128]\nfor size in sizes:\n    img = Image.new(''RGBA'', (size, size), (59, 130, 246, 255))  # 蓝色背景\n    draw = ImageDraw.Draw(img)\n    \n    # 绘制一个简单的书签形状\n    padding = size // 8\n    draw.rectangle([padding, padding, size-padding, size-padding*2], \n                  fill=(255, 255, 255, 255), outline=None)\n    \n    # 保存图标\n    img.save(f''/Users/user/workspace/learn-ai/task04_chrome_favorite_lark/icons/icon{size}.png'')\n    print(f''Created icon{size}.png'')\n\")",
+      "Bash(node -c /Users/user/workspace/learn-ai/task04_chrome_favorite_lark/background/service-worker.js)"
     ],
     "deny": [],
     "ask": []
